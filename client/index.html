@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html ng-app='app'>
+  <head>
+    <meta charset="utf-8">
+    <title>Belt Exam</title>
+    <!-- angular modules setup -->
+    <script type="text/javascript" src="angular/angular.js"></script>
+    <script type="text/javascript" src="angular-route/angular-route.js"></script>
+    <script type="text/javascript">
+    var app = angular.module('app',['ngRoute']);
+    app.config(function($routeProvider){
+      $routeProvider.when('/',{
+        templateUrl:"/partials/login.html"
+      })
+      .when('/dashboard',{
+        templateUrl:"/partials/dashboard.html"
+      })
+      .when('/show/:id',{
+        templateUrl:"/partials/show.html"
+      })
+      .otherwise({redirectTo:'/'})
+    });
+
+
+    app.controller('loginController',['$scope','$location','userFactory',function($scope,$location,userFactory){
+
+      $scope.login = function(user){
+        userFactory.FindUser(user,function(result){
+          if (result == null){
+            // if user is not found then we create the user
+            userFactory.Create(user,function(result1){
+              $location.url('/dashboard')
+            })
+          }else{
+            $location.url('/dashboard')
+          }
+        })
+      }
+    }]);
+
+
+    app.factory('userFactory',['$http',function($http){
+        var factory = {};
+        factory.Create = function(user,callback){
+          $http.post('/user',user).then(function(returned_data){
+            var user = returned_data.data;
+            factory.user = user
+            callback(user)
+          })
+        };
+
+        factory.GetUser = function(){
+          return (factory.user);
+        };
+
+        factory.FindUser = function(user,callback){
+          $http.post('/finduser',user).then(function(returned_data){
+            factory.user = returned_data.data
+            callback(returned_data.data)
+          })
+        };
+        factory.index = function(callback){
+            $http.get('/users').then(function(returned_data){
+              users = returned_data.data;
+              callback(users);
+            });
+        }
+        factory.showUser = function(userid, callback){
+          $http.get(`/showuser/${userid}`).then(function(returned_data){
+            return(returned_data.data)
+          })
+        }
+        return factory;
+    }]);
+
+    app.controller('dashboardController',['$scope','listFactory','userFactory',function($scope,listFactory,userFactory){
+      var list_index = function(){
+        listFactory.index(function(returned_data){
+          $scope.lists = returned_data;
+        });
+      };
+      var user_index = function(){
+        userFactory.index(function(returned_data){
+          $scope.users = returned_data;
+        });
+      };
+      list_index();
+      user_index();
+      $scope.current_user = userFactory.GetUser();
+
+      $scope.addList = function(list){
+        list._creator = $scope.current_user._id
+        listFactory.addList(list, function(result){
+          console.log(result);
+          list_index();
+        })
+      };
+      $scope.checkItem = function(list){
+        if(list.status === "false"){
+          console.log("status not done needs marked done")
+          listFactory.checkItem(list);
+        }else{
+          console.log("status done marking undone")
+          listFactory.uncheckItem(list);
+        }
+      };
+    }]);
+
+    app.controller('showController',['$routeParams','$scope','$location','userFactory','listFactory',function($routeParams,$scope,$location,userFactory,listFactory){
+      var id = $routeParams.id
+      var index = function(){
+        $scope.current_user = userFactory.showUser(id)
+        console.log($scope.current_user)
+      };
+      index();
+
+    }]);
+
+
+
+    app.factory('listFactory',['$http',function($http){
+      function listFactory(){
+        var _this = this;
+        this.addList = function(list, callback){
+          $http.post('/list',list).then(function(returned_data){
+            console.log("after add http request",returned_data.data);
+            callback(returned_data.data);
+          })
+        }
+        this.index = function(callback){
+          $http.get('/lists').then(function(returned_data){
+            lists = returned_data.data;
+            callback(lists);
+          });
+        };
+        this.GetPoll = function(id, callback){
+          $http.get(`/get/poll/${id}`).then(function(returned_data){
+            console.log(returned_data.data);
+            callback(returned_data.data);
+          })
+        };
+        this.Delete = function(poll, callback){
+          $http.delete(`/polls/${poll._id}`).then(function(returned_data){
+            console.log(returned_data);
+            callback();
+          })
+        };
+        this.checkItem = function(list){
+          $http.get(`/list/check/${list._id}`).then(function(returned_data){
+            console.log(returned_data)
+          })
+        }
+        this.uncheckItem = function(list){
+          $http.get(`/list/uncheck/${list._id}`).then(function(returned_data){
+            console.log(returned_data)
+          })
+        }
+      }
+      return new listFactory();
+    }])
+
+
+    </script>
+  </head>
+
+  <body>
+
+        <div ng-view="" class="">
+
+        </div>
+
+  </body>
+</html>

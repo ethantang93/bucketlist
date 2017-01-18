@@ -1,0 +1,27 @@
+<div class="" ng-controller='dashboardController'>
+    <a href="#!/">Bucket Lists</a>
+    <a href="#!/dashboard">Home</a>
+    <a href="#!/logout">logout</a>
+    <hr>
+
+
+    <h3>Welcome, {{current_user.name}}!</h3>
+    <form class="" ng-submit='addList(list)'>
+        <label>Title:</label>
+        <input type="text" name="" value="" ng-model='list.title'><br>
+        <label>Description</label>
+        <input type="text" name="" value="" ng-model='list.description'><br>
+        <select class="" name="" ng-model='list.tagged'>
+        <option ng-repeat="user in users" value={{user._id}}>{{user.name}}</option>
+    </select><br>
+        <input type="text" name="" value="" ng-model='current_user._id'><br>
+        <input type="text" name="" value="" ng-model='list.status'><br>
+        <input type="submit" name="submit" value="submit">
+    </form>
+
+    <h2>Before I die I want to...</h2>
+    <p ng-repeat="list in lists" ng-show="list._creator._id === current_user._id || list.tagged._id === current_user._id"> <input ng-click="checkItem(list)" type="checkbox" ng-checked=list.status> {{list._creator.name}} || {{list.title}} - {{list.description}} and tagged {{list.tagged.name}}...-{{list.createdAt | date:'MMM. dd, yyyy'}}</p>
+
+    <h2>List of other users(click to view profile)</h2>
+    <p ng-repeat="user in users" ng-show="current_user._id != user._id"><a href="#!/show/{{user._id}}">{{user.name}}</a></p>
+</div>
