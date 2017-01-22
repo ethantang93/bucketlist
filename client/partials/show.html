@@ -4,5 +4,5 @@
     <a href="#!/logout">logout</a>
     <hr>
   <h2>{{userfound.name}} bucket list items</h2>
-  <h3 ng-repeat='list in lists'>{{list.title}}//{{list.description}}</h3>
+  <h3 ng-repeat='list in lists' ng-show="list._creator.name==userfound.name || list.tagged.name== userfound.name">{{list._creator.name}}//{{list.title}}//{{list.description}}//{{list.tagged.name}}</h3>
 </div>

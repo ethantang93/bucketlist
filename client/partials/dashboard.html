@@ -12,10 +12,9 @@
         <label>Description</label>
         <input type="text" name="" value="" ng-model='list.description'><br>
         <select class="" name="" ng-model='list.tagged'>
-        <option ng-repeat="user in users" value={{user._id}}>{{user.name}}</option>
+        <option ng-repeat="user in users" ng-show="user.name!=current_user.name" value={{user._id}}>{{user.name}}</option>
     </select><br>
-        <input type="text" name="" value="" ng-model='current_user._id'><br>
-        <input type="text" name="" value="" ng-model='list.status'><br>
+        <input type="hidden" name="" value="" ng-model='current_user._id'><br>
         <input type="submit" name="submit" value="submit">
     </form>
 
