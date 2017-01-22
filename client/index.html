@@ -25,7 +25,7 @@
     app.controller('loginController',['$scope','$location','userFactory',function($scope,$location,userFactory){
 
       $scope.login = function(user){
-        userFactory.FindUser(user,function(result){
+        userFactory.FindUserByName(user,function(result){
           if (result == null){
             // if user is not found then we create the user
             userFactory.Create(user,function(result1){
@@ -53,9 +53,15 @@
           return (factory.user);
         };
 
-        factory.FindUser = function(user,callback){
+        factory.FindUserByName = function(user,callback){
           $http.post('/finduser',user).then(function(returned_data){
             factory.user = returned_data.data
+            callback(returned_data.data)
+          })
+        };
+        factory.FindUserByID = function(user,callback){
+          $http.post('/FindUserByID',user).then(function(returned_data){
+            factory.userfound = returned_data.data
             callback(returned_data.data)
           })
         };
@@ -64,11 +70,6 @@
               users = returned_data.data;
               callback(users);
             });
-        }
-        factory.showUser = function(userid, callback){
-          $http.get(`/showuser/${userid}`).then(function(returned_data){
-            return(returned_data.data)
-          })
         }
         return factory;
     }]);
@@ -96,24 +97,25 @@
         })
       };
       $scope.checkItem = function(list){
-        if(list.status === "false"){
-          console.log("status not done needs marked done")
+        if(list.status == "0"){
           listFactory.checkItem(list);
         }else{
-          console.log("status done marking undone")
           listFactory.uncheckItem(list);
         }
       };
+
     }]);
 
     app.controller('showController',['$routeParams','$scope','$location','userFactory','listFactory',function($routeParams,$scope,$location,userFactory,listFactory){
       var id = $routeParams.id
-      var index = function(){
-        $scope.current_user = userFactory.showUser(id)
-        console.log($scope.current_user)
-      };
-      index();
-
+      var user={};
+      user.id = id;
+      userFactory.FindUserByID(user, function(returned_data){
+        $scope.userfound = returned_data;
+      });
+      listFactory.index(function(returned_data){
+        $scope.lists = returned_data;
+      });
     }]);
 
 

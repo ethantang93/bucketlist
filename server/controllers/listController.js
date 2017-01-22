@@ -46,20 +46,34 @@ function ListController(){
     });
   };
   this.check = function(req,res){
-    list.update({_id:req.params._id},{$set:{'status':"true"}},function(err,result){
+    list.findOne({_id:req.params.id},function(err,result){
       if(err){
         console.log(err);
       }else{
-        console.log(result)
+        result.status = "1";
+        result.save(function(err1,result1){
+          if(err){
+            console.log(err1)
+          }else{
+            console.log(result1)
+          }
+        })
       }
     })
   };
   this.uncheck = function(req,res){
-    list.update({_id:req.params._id},{$set:{'status':"false"}},function(err,result){
+    list.findOne({_id:req.params.id},function(err,result){
       if(err){
         console.log(err);
       }else{
-        console.log(result)
+        result.status = "0";
+        result.save(function(err1,result1){
+          if(err){
+            console.log(err1)
+          }else{
+            console.log(result1)
+          }
+        })
       }
     })
   }

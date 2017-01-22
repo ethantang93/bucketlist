@@ -20,7 +20,7 @@
     </form>
 
     <h2>Before I die I want to...</h2>
-    <p ng-repeat="list in lists" ng-show="list._creator._id === current_user._id || list.tagged._id === current_user._id"> <input ng-click="checkItem(list)" type="checkbox" ng-checked=list.status> {{list._creator.name}} || {{list.title}} - {{list.description}} and tagged {{list.tagged.name}}...-{{list.createdAt | date:'MMM. dd, yyyy'}}</p>
+    <p ng-repeat="list in lists" ng-show="list._creator._id === current_user._id || list.tagged._id === current_user._id"> <input ng-click="checkItem(list)" type="checkbox" ng-checked="list.status=='1'"> {{list._creator.name}} || {{list.title}} - {{list.description}} and tagged {{list.tagged.name}}...-{{list.createdAt | date:'MMM. dd, yyyy'}}...{{list.status}}</p>
 
     <h2>List of other users(click to view profile)</h2>
     <p ng-repeat="user in users" ng-show="current_user._id != user._id"><a href="#!/show/{{user._id}}">{{user.name}}</a></p>

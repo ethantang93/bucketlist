@@ -33,11 +33,22 @@ function UserController(){
     })
   }
   this.show = function(req,res){
-    user.findOne({_id:req.params.id},function(err,result){
+    // user.findOne({_id:req.params.id},function(err,result){
+    //   if(err){
+    //     console.log(err);
+    //   }else{
+    //     console.log("found the user ",result)
+    //     res.json(result)
+    //   }
+    // })
+    console.log(req.body)
+  };
+  this.findid = function(req,res){
+    user.findOne({_id:req.body.id},function(err,result){
       if(err){
         console.log(err);
       }else{
-        console.log("found the user ",result)
+        console.log("found the user by user ID",result)
         res.json(result)
       }
     })

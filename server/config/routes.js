@@ -6,7 +6,8 @@ module.exports = function(app){
   app.post('/user', users.create);
   app.get('/users', users.index);
   app.post('/finduser', users.find);
-  app.post('/showuser/:id', users.show);
+  app.post('/show', users.show);
+  app.post('/FindUserByID', users.findid)
 
   app.post('/list', list.create);
   app.get('/lists', list.index);
